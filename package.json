@@ -1,0 +1,23 @@
+{
+  "name": "financeManager",
+  "version": "1.0.0",
+  "description": "App for financeManager",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pupo",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "express-handlebars": "*",
+    "formidable": "~1.0.17",
+    "mongodb": "*",
+    "mongoose": "*",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}

@@ -1,0 +1,15 @@
+body {
+	max-width: 768px;
+	width: 90%;
+	margin: auto;
+	padding-top: 10px;
+}
+
+#expensestable thead {
+	font-size: larger;
+	font-weight: bold;
+}
+
+#expensestable tr {
+
+}

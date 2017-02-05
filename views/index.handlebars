@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Spread.it</title>
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+	<link rel="stylesheet" href="/css.css" />
+
+</head>
+
+<body>
+
+	<div class = "fluid-container">
+		<table id="expensestable">
+			<thead>
+				<th>Date</th>
+				<th>Value</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th></th>
+			</thead>
+			<tbody>
+
+				<tr class="expensefilter">
+					<td class="inputtable">
+	    				<input type="number" id="value" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+				</tr>
+
+				<tr class="expenseinput">
+					<td class="inputtable">
+	    				<input type="number" id="value" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+					<td class="inputtable">
+	    				<input type="text"   id="type" >
+					</td>
+					<td class="button">
+						<button class="save" onclick="saveexpense()">Save</button>
+					</td>	
+				</tr>
+
+				<tr class="expense">
+					<td class="date">05/02/2016</td>
+					<td class="value">24</td>
+					<td class="type">Food</td>				
+					<td class="descríption">Expensive Restaurant</td>
+					<td class="editbutton">
+						<button onclick="editexpense()">Edit</button>
+					</td>		
+				</tr>
+				<tr class="expense">
+					<td class="date">05/02/2016</td>
+					<td class="value">12.5</td>
+					<td class="type">House Stuff</td>
+					<td class="descríption">Trash Can</td>
+					<td class="button">
+						<button class="save" onclick="editexpense()">Edit</button>
+					</td>			
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+
+</body>
+
+</html>
