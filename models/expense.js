@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var ExpenseSchema = mongoose.Schema({                                 // Expense Schema
    
-    date:        { type: Date,   required: true, default: Date.now },     // Date the photo was created (automatic)
+    date:        { type: Date,   required: true, default: Date.now() },   // Date the photo was created (automatic)
     value:       { type: Number, required: true },                        // Value of the expense
     type:        { type: String, required: true },                        // Type of the expense
     description: { type: String                 }                         // Generated on photo request
@@ -15,7 +15,7 @@ module.exports = {
 
     createExpense:  function(date, value, type, description, callback){         // Creates a new Broadcast
 
-                        var newExpense = new Broadcast;                              // Create new Broadcast
+                        var newExpense = new Expense;                              // Create new Broadcast
     
                         if (date != '')
                         {
@@ -33,6 +33,6 @@ module.exports = {
                     },
 
     getExpenses:    function(callback){
-    					Broadcast.find({}).sort({date: -1}).exec(callback);
-    				}	  
+    					Expense.find({}).sort({date: -1}).exec(callback);
+    				}  
 }

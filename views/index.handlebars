@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Spread.it</title>
+	<title>Finances</title>
 	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
 	<link rel="stylesheet" href="/css.css" />
-
+	 <script src="/js.js" type="text/javascript" defer="defer"></script>
 </head>
 
 <body>
@@ -13,17 +13,19 @@
 	<div class = "fluid-container">
 		<table id="expensestable">
 			<thead>
-				<th>Date</th>
-				<th>Value</th>
-				<th>Type</th>
-				<th>Description</th>
-				<th></th>
+				<tr>
+					<th>Date</th>
+					<th>Value</th>
+					<th>Type</th>
+					<th>Description</th>
+					<th></th>
+				</tr>
 			</thead>
 			<tbody>
 
-				<tr class="expensefilter">
+				<tr id="expensefilter">
 					<td class="inputtable">
-	    				<input type="number" id="value" >
+	    				<input type="text" id="value" >
 					</td>
 					<td class="inputtable">
 	    				<input type="text"   id="type" >
@@ -34,23 +36,24 @@
 					<td class="inputtable">
 	    				<input type="text"   id="type" >
 					</td>
+					<td></td>
 				</tr>
 
-				<tr class="expenseinput">
+				<tr id="expenseinput">
 					<td class="inputtable">
-	    				<input type="number" id="value" >
+	    				<input type="date"   id="expenseinputdate" >
 					</td>
 					<td class="inputtable">
-	    				<input type="text"   id="type" >
+	    				<input type="number" id="expenseinputvalue" >
 					</td>
 					<td class="inputtable">
-	    				<input type="text"   id="type" >
+	    				<input type="text"   id="expenseinputtype" >
 					</td>
 					<td class="inputtable">
-	    				<input type="text"   id="type" >
+	    				<input type="text"   id="expenseinputdesc" >
 					</td>
 					<td class="button">
-						<button class="save" onclick="saveexpense()">Save</button>
+						<button class="save" onclick="saveExpense()">Save</button>
 					</td>	
 				</tr>
 
@@ -60,16 +63,17 @@
 					<td class="type">Food</td>				
 					<td class="descríption">Expensive Restaurant</td>
 					<td class="editbutton">
-						<button onclick="editexpense()">Edit</button>
+						<button class="edit" onclick="editexpense()">Edit</button>
 					</td>		
 				</tr>
+
 				<tr class="expense">
 					<td class="date">05/02/2016</td>
 					<td class="value">12.5</td>
 					<td class="type">House Stuff</td>
 					<td class="descríption">Trash Can</td>
 					<td class="button">
-						<button class="save" onclick="editexpense()">Edit</button>
+						<button class="edit" onclick="editexpense()">Edit</button>
 					</td>			
 				</tr>
 

@@ -28,7 +28,7 @@ var Expense       = require('../models/expense');  // Broadcast mongoose schema 
 
 // Logout - Executes user logout
 router.post('/hi', function(req, res){
-    res.send("oh hi");
+    return res.send("oh hi");
 });
 
 router.post('/createexpense', function(req,res){
@@ -41,7 +41,7 @@ router.post('/createexpense', function(req,res){
     if(!date)          { date = Date.now();                    }
     if(!type || !value){ return res.send('No value or type!'); }
 
-    Expense.createexpense(date, value, type, description, 
+    Expense.createExpense(date, value, type, description, 
         function(err, id) {
             if(err){ return res.send("Error adding to DB!") }
             else   { return res.send(id);                   }
@@ -51,17 +51,31 @@ router.post('/createexpense', function(req,res){
 });
 
 router.post('/readexpensesbackup', function(req,res){
-    
-    var parsedJSON        = req.body.value;
-    // Read JSON with backup
+
+ // curl -H "Content-Type: application/json" -X POST -d "[{"date":1486073906770,"value":66.42,"type":"Bank","description":"settling debt"}
+    var parsedJSON = JSON.parse(req.body.value);
+
+    for (var i = 0; i < parsedJSON.length; i++)
+    {
+        Expense.createExpense(
+            parsedJSON[i].value,
+            parsedJSON[i].date,
+            parsedJSON[i].type,
+            parsedJSON[i].description,
+            function(err,id){
+                if(err){ console.log("Error adding backup!"); }
+                else   { console.log("Added record " + i);    }
+            }
+        );
+    }
 
 });
 
 router.post('/getexpenses', function(req,res){
     
-    Expense.getexpenses(function(err, expenses) {
-            if(err){ return res.send("Error accessing to DB!") }
-            else   { return res.send(expenses);                   }
+    Expense.getExpenses(function(err, expenses) {
+            if(err){ return res.send("Error accessing to DB!"); }
+            else   { return res.send(expenses);                 }
         }
     );
 
