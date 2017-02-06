@@ -33,6 +33,9 @@ module.exports = {
                     },
 
     getExpenses:    function(callback){
-    					Expense.find({}).sort({date: -1}).exec(callback);
+    					Expense.find({})
+                               .select({date:1, value:1, type:1, description:1, _id: 0})
+                               .sort({date: -1}) 
+                               .exec(callback);
     				}  
 }
