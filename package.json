@@ -9,10 +9,9 @@
   "author": "Pupo",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "*",
     "express": "*",
+    "body-parser": "*",
     "express-handlebars": "*",
-    "formidable": "~1.0.17",
     "mongodb": "*",
     "mongoose": "*",
     "request": "^2.79.0"

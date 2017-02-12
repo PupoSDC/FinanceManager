@@ -1,15 +1,6 @@
 //Request all the expenses
 function getExpenses(){
 
-    var body = document.getElementById('expensestable');
-
-    for (var i = body.children.length - 1; i > -1 ; i--)
-    {
-        if( body.children[i].classList.contains('expense') )
-        {
-            body.removeChild(body.children[i]);
-        }
-    }
 
     var request = new XMLHttpRequest;
 
@@ -20,6 +11,17 @@ function getExpenses(){
     request.onreadystatechange = function(){
         if(this.readyState == 4){
             if(this.status == 200){
+
+                var body = document.getElementById('expensestable');
+
+                for (var i = body.children.length - 1; i > -1 ; i--)
+                {
+                    if( body.children[i].classList.contains('expense') )
+                    {
+                        body.removeChild(body.children[i]);
+                    }
+                }
+
 
                 var expenses = JSON.parse(request.responseText);
                 var docfrag  = document.createDocumentFragment();
