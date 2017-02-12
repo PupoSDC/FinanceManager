@@ -24,11 +24,6 @@ var Expense       = require('../models/expense');  // Broadcast mongoose schema 
 ///// USER INPUTS (POSTS) ///////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-// Logout - Executes user logout
-router.post('/hi', function(req, res){
-    return res.send("oh hi");
-});
-
 router.post('/createexpense', function(req,res){
     
     var value        = req.body.value;
@@ -41,7 +36,7 @@ router.post('/createexpense', function(req,res){
 
     Expense.createExpense(date, value, type, description, 
         function(err, id) {
-            if(err){ return res.send(err) }
+            if(err){ return res.status(500).send(err) }
             else   { return res.send(id); }
         }
     );
@@ -49,7 +44,7 @@ router.post('/createexpense', function(req,res){
 
 router.post('/getexpenses', function(req,res){ 
     Expense.getExpenses(function(err, expenses) {
-            if(err){ return res.send("Error accessing to DB!"); }
+            if(err){ return res.status(500).send(err); }
             else   { return res.send(expenses);                 }
         }
     );

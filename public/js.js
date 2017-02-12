@@ -1,47 +1,34 @@
-//Request all the expenses
-function getExpenses(){
+// ON DOCUMENT READY!
+var expenses;
+setdate(document.getElementById('expenseinputdate'));
+getExpenses(function(expenses){
+    console.log(expenses);
+    console.log(sumExpenses(expenses,null,null,''));
+});
 
+// STATISTIC FUNCTIONS
+function sumExpenses(expenses,startDate,endDate,type){
 
-    var request = new XMLHttpRequest;
+    var result = 0;
+    var searchword;
+    var datebegin = startDate == null ? new Date("1970-01-01") : new Date(startDate);
+    var dateend   = endDate   == null ? new Date()             : new Date(endDate);
+    var type      = type.replace(/\s/g,'').toLowerCase()
 
-    request.open("POST","/getexpenses",true);
-    request.setRequestHeader("Content-type", "application/json");
-    request.timeout = 200;
-
-    request.onreadystatechange = function(){
-        if(this.readyState == 4){
-            if(this.status == 200){
-
-                var body = document.getElementById('expensestable');
-
-                for (var i = body.children.length - 1; i > -1 ; i--)
-                {
-                    if( body.children[i].classList.contains('expense') )
-                    {
-                        body.removeChild(body.children[i]);
-                    }
-                }
-
-
-                var expenses = JSON.parse(request.responseText);
-                var docfrag  = document.createDocumentFragment();
-
-                for (var i = 0; i < expenses.length; i++)
-                {
-                    docfrag.appendChild(templateExpense(expenses[i]));
-                }
-                body.appendChild(docfrag);
-            }
-            else
-            {
-                console.log("An error has occured getting the expenses!")
-            }
-        }
+    for (var i = 0; i<expenses.length;i ++ )
+    {   
+        if (    expenses[i].type.replace(/\s/g,'').toLowerCase().includes(type)
+             && new Date(expenses[i].date) > datebegin  
+             && new Date(expenses[i].date) < dateend     )
+        {
+            result += expenses[i].value;
+        }  
     }
+    
+    return result;
+}
 
-    request.send();
-} 
-
+// TEMPLATE FUNCTIONS
 function templateExpense(expense){
 
     var div = document.createElement('div');
@@ -79,6 +66,52 @@ function templateExpense(expense){
 
     return div; 
 }
+
+
+// AJAX FUNCTIONS
+function getExpenses(callback){
+
+
+    var request = new XMLHttpRequest;
+
+    request.open("POST","/getexpenses",true);
+    request.setRequestHeader("Content-type", "application/json");
+    request.timeout = 200;
+
+    request.onreadystatechange = function(){
+        if(this.readyState == 4){
+            if(this.status == 200){
+
+                var body = document.getElementById('expensestable');
+
+                for (var i = body.children.length - 1; i > -1 ; i--)
+                {
+                    if( body.children[i].classList.contains('expense') )
+                    {
+                        body.removeChild(body.children[i]);
+                    }
+                }
+
+                var expenses = JSON.parse(request.responseText);
+                var docfrag  = document.createDocumentFragment();
+
+                for (var i = 0; i < expenses.length; i++)
+                {
+                    docfrag.appendChild(templateExpense(expenses[i]));
+                }
+                body.appendChild(docfrag);
+
+                callback(expenses);
+            }
+            else
+            {
+                console.log("An error has occured getting the expenses!")
+            }
+        }
+    }
+
+    request.send();
+} 
 
 function saveNewExpense(){
     var date = document.getElementById('expenseinputdate').value;
@@ -199,7 +232,3 @@ function setdate(element){
 
     element.value = d + '/' + m +'/' + y
 }
-// ON DOCUMENT READY!
-
-setdate(document.getElementById('expenseinputdate'));
-getExpenses();
