@@ -1,12 +1,11 @@
 body {
-	max-width:        1280px;
+	max-width:        900px;
 	width:            80%;
 	margin:           auto;
 	padding-top:      10px;
   	font-family:      "Roboto", sans-serif;
-  	font-size:        16px;
+  	font-size:        13px;
   	font-weight:      400;
-  	text-rendering:   optimizeLegibility;
 }
 
 button {
@@ -20,7 +19,8 @@ button {
     border:           1px solid transparent;
     border-radius:    .25rem;
     padding:          .5rem 1rem;
-    font-size:        1rem;
+    font-size:        13px;
+    font-weight:      900;
     width:            100%;
 }
 
@@ -51,7 +51,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .hide {
-    display:          none;
+    display:          none !important;
 }
 
 /** EXPENSE TABLE **/
@@ -63,58 +63,63 @@ input[type=number]::-webkit-outer-spin-button {
 	border-collapse:  collapse;
     display:          table;
     background:       #f6f6f6;
+    table-layout:     fixed;
 }
 
 #expensestable div {
     display:          table-row;
+    min-height:       50px;
+    padding-top:       3px;
+    padding-bottom:    3px;
 }
+
 #expensestable div.thead{
+    font-size:        1.3rem;
     font-weight:      900;
     color:            #ffffff;
     background:       #2980b9;
 }
 
 #expensestable div div {
-	padding:          6px 15px;
+	padding-left:     15px;
+    padding-right:    15px;
     display:          table-cell;
 }
 
+#expensestable div div div{
+    padding-left:     0;
+    padding-right:    0;
+}
+
 #expensestable .date {
-    width: 5%;
+    width:            10%;
+    min-width:        100px;
 }
 #expensestable .value {
-    width: 5%;
+    width:            10%;
+    min-width:        90px;
 }
-/*
-
-
-
 #expensestable .type {
-    width: 20%;
+    width:            15%;
+    min-width:        120px;
+}
+#expensestable .description {
+
 }
 #expensestable .button {
-    width: 5%;
+    width:            20%;
+    min-width:        120px
 }
-*/
-
 
 #expensestable .date input{
-    width:            6em;
+    width: 5.8em;
 }
-#expensestable .value  input{
-    width:            4em;
+#expensestable .value input{
+    width: 6em;
 }
-#expensestable .type  input{
-    width:            100%
+#expensestable .type input{
+    width: 100%;
 }
 #expensestable .description input{
-    width:            100%
-}
-
-
-
-
-.eurosign {
-    position:relative;
-    margin-right:-20px
+    width: 100%;
 }

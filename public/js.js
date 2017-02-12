@@ -54,22 +54,22 @@ function templateExpense(expense){
 
     div.innerHTML = [
         '   <div class="date">',
-        '       <p>' + d +'/' + m + '/' + y + '</p>',
+        '       <div>' + d +'/' + m + '/' + y + '</div>',
         '       <input type="text"  value="'+ d +'/' + m + '/' + y + '" maxlength="10" class="hide">',
         '   </div >',
         '   <div class="value">', 
-        '       <p>'+ expense.value.toFixed(2) + ' €</p>',
+        '       <div>'+ expense.value.toFixed(2) + ' €</div>',
         '       <input class="hide" type="number" min="0.01" step="0.01" max="2500" value="'+ expense.value + '" >',
         '   </div>',
         '   <div  class="type">', 
-        '       <p>'+ expense.type + '</p>',
+        '       <div>'+ expense.type + '</div>',
         '       <input type="text" value="'+ expense.type + '" class="hide">',
         '   </div>',
         '   <div  class="description">',
-        '       <p>'+ expense.description + '</p>',
+        '       <div>'+ expense.description + '</div>',
         '       <input type="text" value="'+ expense.description + '" class="hide">',
         '   </div>',
-        '   <div>',
+        '   <div class="button">',
         '       <button class="edit"      onclick="editExpense(this)">Edit</button>',
         '       <button class="save hide" onclick="saveEditExpense(this)">save</button>',
         '   </div >'
@@ -186,6 +186,9 @@ function saveEditExpense(element){
 }
 
 function setdate(element){
+    
+    if(!element){ return; }
+
     var date = new Date();
 
     var d = ("0" + date.getDate()     ).slice(-2);
