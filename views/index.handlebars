@@ -5,60 +5,42 @@
 	<title>Finances</title>
 	<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
 	<link rel="stylesheet" href="/css.css" />
-	 <script src="/js.js" type="text/javascript" defer="defer"></script>
+	<script src="/js.js" type="text/javascript" defer="defer"></script>
 </head>
 
 <body>
 
 	<div class = "fluid-container">
-		<table id="expensestable">
-			<thead>
-				<tr>
-					<th>Date</th>
-					<th>Value</th>
-					<th>Type</th>
-					<th>Description</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
+		
+		<div id="expensestable">
+			
+			<div class ="thead">
+				<div class="date"        >Date</div>
+				<div class="value"       >Value</div>
+				<div class="type"        >Type</div>
+				<div class="description" >Description</div>
+				<div class="button"      ></div>
+			</div>
 
-				<tr id="expensefilter">
-					<td class="inputtable">
-	    				<input type="text" id="value" >
-					</td>
-					<td class="inputtable">
-	    				<input type="text"   id="type" >
-					</td>
-					<td class="inputtable">
-	    				<input type="text"   id="type" >
-					</td>
-					<td class="inputtable">
-	    				<input type="text"   id="type" >
-					</td>
-					<td></td>
-				</tr>
+			<div id="expenseinput">
+				<div class="date">
+    				<input type="text"   maxlength="10" id="expenseinputdate" >
+				</div>
+				<div class="value">
+    				<input type="text"   maxlength="7"  id="expenseinputvalue" >
+				</div>
+				<div class="type">
+    				<input type="text"   class="type" id="expenseinputtype" >
+				</div>
+				<div class="description">
+    				<input type="text"   class="descritption" id="expenseinputdesc" >
+				</div>
+				<div class="button">
+					<button class="save" onclick="saveNewExpense()">Save</button>
+				</div>	
+			</div>
 
-				<tr id="expenseinput">
-					<td class="inputtable">
-	    				<input type="date"   id="expenseinputdate" >
-					</td>
-					<td class="inputtable">
-	    				<input type="number" id="expenseinputvalue" >
-					</td>
-					<td class="inputtable">
-	    				<input type="text"   id="expenseinputtype" >
-					</td>
-					<td class="inputtable">
-	    				<input type="text"   id="expenseinputdesc" >
-					</td>
-					<td class="button">
-						<button class="save" onclick="saveExpense()">Save</button>
-					</td>	
-				</tr>
-
-			</tbody>
-		</table>
+		</div>
 	</div>
 
 </body>

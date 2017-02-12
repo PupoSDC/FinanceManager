@@ -1,6 +1,6 @@
 body {
-	max-width:        768px;
-	width:            90%;
+	max-width:        1280px;
+	width:            80%;
 	margin:           auto;
 	padding-top:      10px;
   	font-family:      "Roboto", sans-serif;
@@ -9,63 +9,112 @@ body {
   	text-rendering:   optimizeLegibility;
 }
 
+button {
+    color:            #fff;
+    display:          inline-block;
+    font-weight:      400;
+    line-height:      1.25;
+    text-align:       center;
+    white-space:      nowrap;
+    vertical-align:   middle;
+    border:           1px solid transparent;
+    border-radius:    .25rem;
+    padding:          .5rem 1rem;
+    font-size:        1rem;
+    width:            100%;
+}
+
+button.save {
+    background-color: #5cb85c;
+    border-color:     #5cb85c;
+}
+
+button.edit {
+    background-color: #f0ad4e;
+    border-color:     #f0ad4e;
+}
+
+input {
+    font-family:      inherit;
+    font-size:        inherit;
+    font-weight:      inherit;
+}
+
+input.date{
+    width:            6em;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.hide {
+    display:          none;
+}
+
+/** EXPENSE TABLE **/
 
 #expensestable {
-	margin:     0 0 40px 0;
-	width:      100%;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-	border-collapse: collapse;
+	margin:           0 0 40px 0;
+	width:            100%;
+	box-shadow:       0 1px 3px rgba(0, 0, 0, 0.2);
+	border-collapse:  collapse;
+    display:          table;
+    background:       #f6f6f6;
 }
 
-thead tr{
-    font-weight: 900;
-    color:       #ffffff;
-    background:  #2980b9;
+#expensestable div {
+    display:          table-row;
+}
+#expensestable div.thead{
+    font-weight:      900;
+    color:            #ffffff;
+    background:       #2980b9;
 }
 
-th {
-	padding:     6px 15px;
+#expensestable div div {
+	padding:          6px 15px;
+    display:          table-cell;
 }
 
-tr {
-    background: #f6f6f6;
+#expensestable .date {
+    width: 5%;
+}
+#expensestable .value {
+    width: 5%;
+}
+/*
+
+
+
+#expensestable .type {
+    width: 20%;
+}
+#expensestable .button {
+    width: 5%;
+}
+*/
+
+
+#expensestable .date input{
+    width:            6em;
+}
+#expensestable .value  input{
+    width:            4em;
+}
+#expensestable .type  input{
+    width:            100%
+}
+#expensestable .description input{
+    width:            100%
 }
 
-td {
-    padding: 6px 12px;
-}
 
-button {
-    color: #fff;
-    display: inline-block;
-    font-weight: 400;
-    line-height: 1.25;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    border: 1px solid transparent;
-    border-radius: .25rem;
-    padding: .5rem 1rem;
-    font-size: 1rem;
-    transition: all .2s ease-in-out;
-    width: 100%;
-}
 
-.save {
-	background-color: #5cb85c;
-	border-color: #5cb85c;
-}
 
-.edit {
-    background-color: #f0ad4e;
-    border-color: #f0ad4e;
-}
-
-.value {
-    text-align: right;
-    padding-right: 30px;
-}
-
-#expensefilter {
-    display: none;
+.eurosign {
+    position:relative;
+    margin-right:-20px
 }

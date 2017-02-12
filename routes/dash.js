@@ -43,43 +43,40 @@ router.post('/createexpense', function(req,res){
 
     Expense.createExpense(date, value, type, description, 
         function(err, id) {
-            if(err){ return res.send("Error adding to DB!") }
-            else   { return res.send(id);                   }
+            if(err){ return res.send(err) }
+            else   { return res.send(id); }
         }
     );
-
 });
 
-router.post('/readexpensesbackup', function(req,res){
-
- // curl -H "Content-Type: application/json" -X POST -d "[{"date":1486073906770,"value":66.42,"type":"Bank","description":"settling debt"}
-    var parsedJSON = JSON.parse(req.body.value);
-
-    for (var i = 0; i < parsedJSON.length; i++)
-    {
-        Expense.createExpense(
-            parsedJSON[i].value,
-            parsedJSON[i].date,
-            parsedJSON[i].type,
-            parsedJSON[i].description,
-            function(err,id){
-                if(err){ console.log("Error adding backup!"); }
-                else   { console.log("Added record " + i);    }
-            }
-        );
-    }
-
-});
-
-router.post('/getexpenses', function(req,res){
-    
+router.post('/getexpenses', function(req,res){ 
     Expense.getExpenses(function(err, expenses) {
             if(err){ return res.send("Error accessing to DB!"); }
             else   { return res.send(expenses);                 }
         }
     );
-
 });
+
+router.post('/updateexpense', function(req,res){ 
+
+    var expense = {
+        _id          : req.body._id,
+        value        : req.body.value,
+        date         : req.body.date,           
+        type         : req.body.type,    
+        description  : req.body.description
+    }
+
+    if(!expense.type || !expense.value || !expense._id || !expense.date){
+        return res.status(500).send('Incomplete information!'); 
+    }
+
+    Expense.updateExpense(expense,function(err, expense) {
+        if(err){ return res.status(500).send(err); }  
+        else   { return res.send(expense);         }
+    });
+});
+
 
 
 /////////////////////////////////////////////////////////////
