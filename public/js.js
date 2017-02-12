@@ -1,5 +1,4 @@
 // ON DOCUMENT READY!
-var expenses;
 setdate(document.getElementById('expenseinputdate'));
 getExpenses(function(expenses){
     console.log(expenses);

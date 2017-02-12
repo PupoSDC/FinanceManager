@@ -32,15 +32,6 @@ module.exports = {
                             });                     
                     },
 
-    readBackupExpenses: function(expenses,callback){             
-                            for ( var i = 0; i<expenses.length; i++)
-                            {
-                                //this.createExpense(expenses[i].date,expenses[])
-                            }                    
-                        },
-
-    printBackupExpenses: function(callback){ Expense.find({}).exec(callback); },
-
     getExpenses:    function(callback){
                         Expense.find({})
                                .select({date:1, value:1, type:1, description:1, _id: 1})
