@@ -1,4 +1,4 @@
-// ON DOCUMENT READY!
+// On Document ready
 setdate(document.getElementById('expenseinputdate'));
 getExpenses(function(expenses){
     console.log(expenses);
@@ -6,7 +6,7 @@ getExpenses(function(expenses){
     drawCanvas(null);
 });
 
-// STATISTIC FUNCTIONS
+// STATISTIC Function
 function sumExpenses(expenses,startDate,endDate,type){
 
     var result = 0;
@@ -28,7 +28,7 @@ function sumExpenses(expenses,startDate,endDate,type){
     return result;
 }
 
-// TEMPLATE FUNCTIONS
+// DOM manipulation functions
 function templateExpense(expense){
 
     var div = document.createElement('div');
@@ -65,6 +65,32 @@ function templateExpense(expense){
     ].join("\n");
 
     return div; 
+}
+
+function setdate(element){
+    
+    if(!element){ return; }
+
+    var date = new Date();
+
+    var d = ("0" + date.getDate()     ).slice(-2);
+    var m = ("0" + (date.getMonth()+1)).slice(-2);
+    var y = date.getFullYear(); 
+
+    element.value = d + '/' + m +'/' + y
+}
+
+function editExpense(element){
+    
+    var expense = element.parentElement.parentElement;
+
+    for (var i = 0; i < expense.children.length; i++)
+    {
+        for (var j = 0; j < expense.children[i].children.length; j++)
+        {
+            expense.children[i].children[j].classList.toggle("hide");
+        }
+    }
 }
 
 // Canvas Functions
@@ -110,7 +136,7 @@ function drawCanvas(expenses){
     });
 }
 
-// AJAX FUNCTIONS
+// AJAX Functions
 function getExpenses(callback){
 
     var request = new XMLHttpRequest;
@@ -200,19 +226,6 @@ function saveNewExpense(){
     }
 }
 
-function editExpense(element){
-    
-    var expense = element.parentElement.parentElement;
-
-    for (var i = 0; i < expense.children.length; i++)
-    {
-        for (var j = 0; j < expense.children[i].children.length; j++)
-        {
-            expense.children[i].children[j].classList.toggle("hide");
-        }
-    }
-}
-
 function saveEditExpense(element){
     
     var expense     = element.parentElement.parentElement;
@@ -261,16 +274,24 @@ function saveEditExpense(element){
     }
 }
 
-function setdate(element){
-    
-    if(!element){ return; }
+function saveBackup(jsoninput){
 
-    var date = new Date();
+    var request = new XMLHttpRequest;
 
-    var d = ("0" + date.getDate()     ).slice(-2);
-    var m = ("0" + (date.getMonth()+1)).slice(-2);
-    var y = date.getFullYear(); 
+    request.open('POST','/savebackup',true);
+    request.setRequestHeader('Content-type', 'application/json');
 
-    element.value = d + '/' + m +'/' + y
+    request.send(jsoninput);
+
+    request.onreadystatechange = function(){
+        if(this.readyState == 4){
+            if(this.status == 200){
+                console.log( request.responseText + " documents saved!");
+            }
+            else
+            {
+                console.log("Error saving documents: " + request.responseText)
+            }
+        }
+    }     
 }
-

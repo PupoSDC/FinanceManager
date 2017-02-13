@@ -54,6 +54,31 @@ input[type=number]::-webkit-outer-spin-button {
     display:          none !important;
 }
 
+#loginandregister {
+    max-width:        340px;
+    padding-top:      20px;
+    margin:           auto;
+    font-size:        1.6em;
+    font-weight:      800px;
+}
+
+#loginandregister div{
+    margin-top: 10px;
+
+}
+
+#loginandregister button {
+    padding:          1rem 1rem;
+    max-width:        160px;
+    font-size:        1.3em;
+    font-weight:      800px;
+}
+
+#loginandregister input {
+    max-width:        320px;
+    width:            100%;
+}
+
 /** EXPENSE TABLE **/
 
 #expensestable {
@@ -134,7 +159,12 @@ input[type=number]::-webkit-outer-spin-button {
     width:            100%;
 }
 
+
+
+
+
 #myCanvas {
     width:            100%;
     height:           200px;
 }
+

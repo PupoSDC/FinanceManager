@@ -9,11 +9,17 @@
   "author": "Pupo",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "*",
     "express": "*",
     "body-parser": "*",
+    "cookie-parser": "*",
     "express-handlebars": "*",
+    "express-session": "*",
     "mongodb": "*",
     "mongoose": "*",
+    "passport": "*",
+    "passport-http": "*",
+    "passport-local": "*",
     "request": "^2.79.0"
   },
   "devDependencies": {
