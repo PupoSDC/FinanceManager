@@ -27,6 +27,11 @@ router.post('/login', function(req, res, next) {
     var username  = req.body.username;  
     var password  = req.body.password;
 
+    if (username.length < 3 || password.length <3 || username.length > 16 || password.length > 16)
+    {
+        return res.status(500).send("Failed login: check parameters!");
+    }
+
     passport.authenticate('local', function(err, user, info) {
         if (err)   { console.log(error); }                                             // logs error if error
         if (!user) { return res.status(500).send("Failed login: no such user!"); }     // Returns failure message if failed login
@@ -42,6 +47,11 @@ router.post('/register', function(req, res, next){
     var username  = req.body.username;
     var password  = req.body.password;
     
+    if (username.length < 3 || password.length <3 || username.length > 16 || password.length > 16)
+    {
+        return res.status(500).send("Failed register: check parameters!");
+    }
+
     User.getUserByUsername(username, function(err,user) {
         if (err) return res.status(500).send("Error accessing database!");
 
@@ -68,24 +78,17 @@ router.post('/register', function(req, res, next){
 router.post('/createexpense', function(req,res){
     if(!req.user){ return res.status(500).status("No user!")}
     
-    var expense = {
+    var newExpense = {
         value        : req.body.value,
         date         : req.body.date,           
         type         : req.body.type,    
         description  : req.body.description
     }
 
-    if(!expense.date){
-        date = Date.now();                    
-    }
-    if(!expense.type || !expense.value){ 
-        return res.send('No value or type!'); 
-    }
-
-    User.createExpense(req.user._id,expense, 
-        function(err, id) {
+    User.createExpense(req.user._id, newExpense, 
+        function(err, expense) {
             if(err){ return res.status(500).send(err) }
-            else   { return res.send(id); }
+            else   { return res.send(expense);        }
         }
     );
 });
@@ -96,7 +99,6 @@ router.post('/savebackup', function(req,res){
 
     for (var i=0; i<req.body.length; i++)
     {
-
         var expense = {
             value        : req.body[i].value,
             date         : req.body[i].date,           
@@ -104,8 +106,7 @@ router.post('/savebackup', function(req,res){
             description  : req.body[i].description
         }
 
-        User.createExpense(req.user._id,expense, 
-        function(err, id) {
+        User.createExpense(req.user._id,expense,function(err, id) {
             if(!err){ savedocuments++; }
             
             if( savedocuments == req.body.length )
@@ -125,18 +126,24 @@ router.post('/getexpenses', function(req,res){
     );
 });
 
+router.post('/getstatistics', function(req,res){ 
+    if(!req.user){ return res.status(500).status("No user!")}
+    User.resetStatistics(req.user._id,function(err,statistics) {
+            if(err){ return res.status(500).send(err); }
+            else   { return res.send(statistics);        }
+        }
+    );
+});
+
 router.post('/updateexpense', function(req,res){ 
     if(!req.user){ return res.status(500).status("No user!")}
+    
     var expense = {
         _id          : req.body._id,
         value        : req.body.value,
         date         : req.body.date,           
         type         : req.body.type,    
         description  : req.body.description
-    }
-
-    if(!expense.type || !expense.value || !expense._id || !expense.date){
-        return res.status(500).send('Incomplete information!'); 
     }
 
     User.updateExpense(req.user._id,expense,function(err, expense) {

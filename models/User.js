@@ -1,18 +1,31 @@
-var mongoose  = require('mongoose'); // mongoose
-var bcrypt    = require('bcryptjs'); // bcrypt, used to hash passwords
+var mongoose  = require('mongoose'); // Mongoose
+var bcrypt    = require('bcryptjs'); // Used to hash passwords
 
-var Expense = mongoose.Schema({                                 // Expense Schema
-    date:        { type: Date,   required: true, default: Date.now() },   // Date of the expense
-    value:       { type: Number, required: true },                        // Value of the expense
-    type:        { type: String, required: true },                        // Type of the expense
-    description: { type: String                 }                         // Generated on photo request
+// Mongoose model User is defined. User contianes [expense] & [dailyExpens]
+// methods' callback functions return an error message on first parameter. 
+
+var Expense = mongoose.Schema({                                 
+    date:        { type: Date,   required: true, default: Date.now() },  
+    value:       { type: Number, required: true                      },                        
+    type:        { type: String, required: true                      },                        
+    description: { type: String                                      }                         
 });
 
-var UserSchema = mongoose.Schema({                                 // Expense Schema
-    username:    { type: String,  required: true, unique: true },         // Username
-    password:    { type: String,  required: true    },                    // Hashed Password
-    expenses:    [Expense],
-    statistics:  []
+var dailyExpense = mongoose.Schema({
+    day:      { type: Number, default: 0.0 },
+    month:    { type: Number               },
+    year:     { type: Number               },
+    expenses: { type: Number               },
+    type:     { type: String               } 
+});
+
+var UserSchema = mongoose.Schema({                                
+    username:       { type: String,  required: true, unique: true },
+    password:       { type: String,  required: true               },
+    totalexpenses:  { type: Number, default: 0.0                  },
+    expenses:       [ Expense                                     ],
+    timestatistics: [ dailyExpense                                ],   
+    types:          [ {type: String}                              ]
 });
 
 var User = module.exports = mongoose.model('User', UserSchema);
@@ -20,104 +33,201 @@ var User = module.exports = mongoose.model('User', UserSchema);
 module.exports = {
 
     createUser:         
-    function(username,password,callback){                          
-        bcrypt.hash(password, 10, function(err, hash) {               // Hashes the password
-            if(err){ return callback(err,null) }                         // If error return callback null
-            var newUser = new User({                                     // Creates new user
-                username: username,                                         // Username
-                password: hash                                              // Password
-            });                     
-            newUser.save(function(err,user,numAffected){              // Save new user and callbacks
-                if(err){ return callback(err,null) }                            // If error return callback null
-                else   { return callback(null,user._Id) }                       // Else return user.id
+    function(username,password,callback){                        
+        // Callback(errormessage,user._Id)                          
+        bcrypt.hash(password, 10, function(err, hash) {               
+            if(err)
+            { 
+                return callback("error hashing the password",null) 
+            }  
+
+            var newUser = new User({                                     
+                username: username,                                         
+                password: hash                                             
+            });
+
+            newUser.save(function(err,user,numAffected){              
+                if(err)
+                { 
+                    return callback("it was not possible to create the user",null); 
+                }                          
+                else   
+                { 
+                    return callback(null,user._Id); 
+                }   
             });                                   
         });
     },
 
-    getUserByUsername:  
-    function(username,callback){                                   
-        User.findOne({username: username})                             // Find by username
-            .select('-password')                                       // Seclect everything but password
-            .exec(function(err,user){                                  // Excute query
-                if(err){ return callback(err,null)}                    // If error callback null
-                else   { return callback(null,user)}                   // Else callback with user (user may be null!)
+    getUserByUsername:
+    function(username,callback){                                 
+        User.findOne({username: username})
+            .select('-password')
+            .exec(function(err,user){
+                if(err)
+                { 
+                    return callback("error finding the user",null)
+                }
+                else   
+                { 
+                    return callback(null,user)
+                }
             })                                           
     },
     
     comparePassword:    
-    function(username,candidatePassword,callback){                 
-       User.findOne({username: username})                              // Find user by username
-           .select('password')                                         // Select's only the password + developer status
-           .exec(function(err,user){                                   // Executes query
-                if(err || !user) { return callback(false, null) }          // If error return "false"       
-                bcrypt.compare(candidatePassword, user.password,           // Compares user password with candidate password
-                    function(err, isMatch) {                                   // isMatch = result from the compare (true || false)
-                        if(err)     { return callback(err ,false,null);    }      // If error throw error 
-                        if(!isMatch){ return callback(null,false,null);    }      // If no match, return false an no user  
-                        else        { return callback(null,true,user);     }      // Else return true and a user id            
+    function(username,candidatePassword,callback){               
+        User.findOne({username: username})                              
+           .select('password')                                         
+           .exec(function(err,user){                                   
+                if(err || !user) { return callback("No user found",false,null); }                
+                bcrypt.compare(candidatePassword, user.password,           
+                    function(err, isMatch) { 
+                        // isMatch = result from the compare (true || false)                                  
+                        if(err)     
+                        { 
+                            return callback("Error comparing the password" ,false,null);    
+                        }      
+                        else if(!isMatch)
+                        { 
+                            return callback(null,false,null);    
+                        }
+                        else        
+                        { 
+                            return callback(null,true,user);     
+                        }
                     }
                 );
         });
     }, 
 
     getUserById:        
-    function(iduser,callback){                                     
-        User.findById(iduser)                                          // Find by Id
-            .select('-password')                                       // Select everything but password
-            .exec(function(err,user){                                  // Execute query
-                if(err) { return callback(err,null)}                   // If error callback with null
-                else    { return callback(err,user)}                   // Else callback with user (user may be null!)
+    function(iduser,callback){                                   
+        User.findById(iduser)                                          
+            .select('-password')                                       
+            .exec(function(err,user){                                  
+                if(err) 
+                { 
+                    return callback("error getting user",null);
+                }                   
+                else  
+                { 
+                    return callback(null,user)
+                }                 
             });                                         
     },  
 
     createExpense:  
-    function(userID,expense,callback){                             
-        User.findById(userID,function(err,user){                      // Get user
-            if(err) { return callback(err, null) }                        // If error, return
+    function(userID,expense,callback){                           
+        User.findById(userID,function(err,user){                 
+            if(err) 
+            { 
+                return callback("error getting user", null) 
+            }                        
 
-            if (expense.date == ''){ date = Date.now(); }                 // Default date to now if no date provided
+            // Default date to now if no date provided
+            if (expense.date == ''){ date = Date.now(); }                 
             
-            if(!expense.type || !expense.value )
+            if(!expense.type || !expense.value)
             {
                 return callback('Incomplete information!',null); 
             }
 
             var newExpense = {
-                date        : expense.date,                               // Store date provided or default
-                value       : expense.value,                              // Store the value of the expense
-                type        : expense.type,                               // Store the type of expense
-                description : expense.description                         // Store the expesne description (optional)
+                date        : expense.date,
+                value       : expense.value,
+                type        : expense.type,
+                description : expense.description
             }                                                       
             user.expenses.push(newExpense);
-            user.save(callback(user.expenses[user.expenses.length -1]));
+            user.save(callback(null,user.expenses[user.expenses.length -1]));
         });                
     },
      
     getExpenses:    
-    function(userID,callback){                                     
+    function(userID,callback){                                   
         User.findById(userID,function(err,user){                 
-            if(err) { return callback(err, null) }                         
-            else    { callback(null,user.expenses)    }
+            if(err) { 
+                return callback("error getting user", null);
+            }                         
+            else    { 
+                callback(null,user.expenses.sort(function(a,b){
+
+                    // Trim date to ~ the yyyymmdd                    
+                    var dateA = Math.floor(Date.parse(a.date) / 1000 / 60 / 60 / 24);     
+                    var dateB = Math.floor(Date.parse(b.date) / 1000 / 60 / 60 / 24);
+
+                    // sorts by date, or by type
+                    if ( dateB  - dateA  ){ return b.date - a.date; }
+                    if ( a.type < b.type ){ return -1; }
+                    if ( a.type > b.type ){ return  1; }
+                    else                  { return  0; }
+                })); 
+            }
         });
     },
 
     updateExpense: 
-    function(userID,expenseinput,callback){                        
+    function(userID,expenseinput,callback){                      
         User.findById(userID,function(err,user){                 
-            if(err)                   { return callback(err, null) } 
-            if(!user.expenses.id(_id)){ return callback("Expense not found",null); }
-
-            if(!expense.type || !expense.value || !expense._id || !expense.date){
-                return callback('Incomplete information!',null); 
+            if(err)                   
+            { 
+                return callback("error getting the user", null) 
+            } 
+            if(!expenseinput.type || !expenseinput.value || !expenseinput._id || !expenseinput.date)
+            {
+                return callback('incomplete information',null); 
+            }
+            if(!user.expenses.id(expenseinput._id))
+            { 
+                return callback("expense not found",null); 
             }
 
-            user.expenses.id(_id).value       = expenseinput.value;
-            user.expenses.id(_id).type        = expenseinput.type;
-            user.expenses.id(_id).description = expenseinput.description;
-            user.expenses.id(_id).date        = expenseinput.date;
+            user.expenses.id(expenseinput._id).value       = expenseinput.value;
+            user.expenses.id(expenseinput._id).type        = expenseinput.type;
+            user.expenses.id(expenseinput._id).description = expenseinput.description;
+            user.expenses.id(expenseinput._id).date        = expenseinput.date;
 
-            user.save(callback(null,user.expenses.id(_id)));
+            user.save(function(err,updateduser){
+                if(err)
+                {
+                    callback("error saving the updated expense");
+                }
+                else
+                {
+                    callback(null,updateduser.expenses.id(expenseinput._id));
+                }
+                
+            });
         });
-    } 
+    }, 
+
+    resetStatistics:
+    function(userID,callback){                                   
+        User.findById(userID,function(err,user){                 
+            if(err)                   
+            { 
+                return callback("error getting user", null) 
+            }
+
+            user.totalexpenses = 0;
+
+            for(var i = 0; i<user.expenses.length; i++)
+            {
+                user.totalexpenses += user.expenses[i].value;
+            } 
+            
+            user.save(function(err,updateduser){
+                if(err) 
+                { 
+                    return callback("error saving statistics",null); 
+                }
+                else    
+                { 
+                    return callback(null,updateduser); 
+                }
+            });
+        })
+    }
     
 }

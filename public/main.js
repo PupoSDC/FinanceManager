@@ -2,31 +2,9 @@
 setdate(document.getElementById('expenseinputdate'));
 getExpenses(function(expenses){
     console.log(expenses);
-    console.log(sumExpenses(expenses,null,null,''));
     drawCanvas(null);
+    getStatistics();
 });
-
-// STATISTIC Function
-function sumExpenses(expenses,startDate,endDate,type){
-
-    var result = 0;
-    var searchword;
-    var datebegin = startDate == null ? new Date("1970-01-01") : new Date(startDate);
-    var dateend   = endDate   == null ? new Date()             : new Date(endDate);
-    var type      = type.replace(/\s/g,'').toLowerCase()
-
-    for (var i = 0; i<expenses.length;i ++ )
-    {   
-        if (    expenses[i].type.replace(/\s/g,'').toLowerCase().includes(type)
-             && new Date(expenses[i].date) > datebegin  
-             && new Date(expenses[i].date) < dateend     )
-        {
-            result += expenses[i].value;
-        }  
-    }
-    
-    return result;
-}
 
 // DOM manipulation functions
 function templateExpense(expense){
@@ -173,6 +151,29 @@ function getExpenses(callback){
             else
             {
                 console.log("An error has occured getting the expenses!")
+            }
+        }
+    }
+
+    request.send();
+} 
+
+function getStatistics(callback){
+
+    var request = new XMLHttpRequest;
+
+    request.open("POST","/getstatistics",true);
+    request.setRequestHeader("Content-type", "application/json");
+    request.timeout = 200;
+
+    request.onreadystatechange = function(){
+        if(this.readyState == 4){
+            if(this.status == 200){
+                console.log(request.responseText)
+            }
+            else
+            {
+                console.log("An error has occured getting the statistics: " + request.responseText)
             }
         }
     }
