@@ -6,6 +6,7 @@ getExpenses(function(expenses){
     getStatistics();
 });
 
+
 // DOM manipulation functions
 function templateExpense(expense){
 
@@ -20,14 +21,16 @@ function templateExpense(expense){
     var y = date.getFullYear();     
 
     div.innerHTML = [
+        '   <div class="value">', 
+        '       <div>'+ expense.value.toFixed(2) + '</div>',
+        '       <input class="hide" type="number" min="0.01" step="0.01" max="2500" value="'+ expense.value.toFixed(2) + '" >',
+        '       <div>&nbsp€</div><div style="color: #ddd;" class="hide">&nbsp€</div>',
+        '   </div>',
         '   <div class="date">',
         '       <div>' + d +'/' + m + '/' + y + '</div>',
         '       <input type="text"  value="'+ d +'/' + m + '/' + y + '" maxlength="10" class="hide">',
         '   </div >',
-        '   <div class="value">', 
-        '       <div>'+ expense.value.toFixed(2) + ' €</div>',
-        '       <input class="hide" type="number" min="0.01" step="0.01" max="2500" value="'+ expense.value + '" >',
-        '   </div>',
+
         '   <div  class="type">', 
         '       <div>'+ expense.type + '</div>',
         '       <input type="text" value="'+ expense.type + '" class="hide">',
@@ -131,7 +134,7 @@ function getExpenses(callback){
 
                 for (var i = body.children.length - 1; i > -1 ; i--)
                 {
-                    if( body.children[i].classList.contains('expense') )
+                    if( body.children[i].classList.contains('expense') && body.children[i].id != "expenseinput" )
                     {
                         body.removeChild(body.children[i]);
                     }
@@ -209,9 +212,9 @@ function saveNewExpense(){
         request.onreadystatechange = function(){
             if(this.readyState == 4){
                 if(this.status == 200){
-                    document.getElementById('expenseinputvalue').value = '';
-                    document.getElementById('expenseinputtype').value  = '';
-                    document.getElementById('expenseinputdesc').value  = '';
+                    document.getElementById('expenseinputvalue').value = '0.00';
+                    document.getElementById('expenseinputtype').value  = 'Type';
+                    document.getElementById('expenseinputdesc').value  = 'description';
                     getExpenses();  
                 }
                 else

@@ -29,7 +29,7 @@ router.post('/login', function(req, res, next) {
 
     if (username.length < 3 || password.length <3 || username.length > 16 || password.length > 16)
     {
-        return res.status(500).send("Failed login: check parameters!");
+        return res.status(500).send("Failed login: Invalid username/password!");
     }
 
     passport.authenticate('local', function(err, user, info) {
@@ -46,17 +46,12 @@ router.post('/register', function(req, res, next){
     
     var username  = req.body.username;
     var password  = req.body.password;
-    
-    if (username.length < 3 || password.length <3 || username.length > 16 || password.length > 16)
-    {
-        return res.status(500).send("Failed register: check parameters!");
-    }
 
     User.getUserByUsername(username, function(err,user) {
-        if (err) return res.status(500).send("Error accessing database!");
+        if (err) return res.status(500).send("Error accessing the database: " + err + "!");
 
         User.createUser(username,password,function(err, user){            
-            if (err) return res.status(500).send("Error creating user!");
+            if (err) return res.status(500).send("Error creating user: " + err + "!");
  
             passport.authenticate('local', function(err, user, info) {
                 if (err) return res.status(418).send("Failed to login after account creation!");
@@ -76,7 +71,11 @@ router.post('/register', function(req, res, next){
 /////////////////////////////////////////////////////////////
 
 router.post('/createexpense', function(req,res){
-    if(!req.user){ return res.status(500).status("No user!")}
+    
+    if(!req.user)
+    { 
+        return res.status(500).status("Error creating expense: No user logged in!")
+    }
     
     var newExpense = {
         value        : req.body.value,
@@ -87,8 +86,14 @@ router.post('/createexpense', function(req,res){
 
     User.createExpense(req.user._id, newExpense, 
         function(err, expense) {
-            if(err){ return res.status(500).send(err) }
-            else   { return res.send(expense);        }
+            if(err)
+            { 
+                return res.status(500).send("Error creating expense: " + err + "!") 
+            }
+            else   
+            { 
+                return res.send(expense);        
+            }
         }
     );
 });
@@ -118,25 +123,51 @@ router.post('/savebackup', function(req,res){
 });
 
 router.post('/getexpenses', function(req,res){ 
-    if(!req.user){ return res.status(500).status("No user!")}
+    
+    if(!req.user)
+    { 
+        return res.status(500).status("Error getting expenses: No user logged in!")
+    }
+
     User.getExpenses(req.user._id,function(err, expenses) {
-            if(err){ return res.status(500).send(err); }
-            else   { return res.send(expenses);        }
+            if(err)
+            { 
+                return res.status(500).send("Error getting expenses: " + err + "!"); 
+            }
+            else   
+            { 
+                return res.send(expenses);        
+            }
         }
     );
 });
 
 router.post('/getstatistics', function(req,res){ 
-    if(!req.user){ return res.status(500).status("No user!")}
+    
+    if(!req.user)
+    { 
+        return res.status(500).status("Error getting statistics: No user logged in!")
+    }
+
     User.resetStatistics(req.user._id,function(err,statistics) {
-            if(err){ return res.status(500).send(err); }
-            else   { return res.send(statistics);        }
+            if(err)
+            { 
+                return res.status(500).send("Error getting statistics: " + err + "!"); 
+            }
+            else   
+            { 
+                return res.send(statistics);        
+            }
         }
     );
 });
 
 router.post('/updateexpense', function(req,res){ 
-    if(!req.user){ return res.status(500).status("No user!")}
+    
+    if(!req.user)
+    { 
+        return res.status(500).status("Error updating expense: No user logged in!")
+    }
     
     var expense = {
         _id          : req.body._id,
@@ -147,8 +178,14 @@ router.post('/updateexpense', function(req,res){
     }
 
     User.updateExpense(req.user._id,expense,function(err, expense) {
-        if(err){ return res.status(500).send(err); }  
-        else   { return res.send(expense);         }
+        if(err)
+        { 
+            return res.status(500).send("Error updating expense: " + err + "!"); 
+        }  
+        else   
+        { 
+            return res.send(expense);         
+        }
     });
 });
 

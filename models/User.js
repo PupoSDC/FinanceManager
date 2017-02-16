@@ -12,11 +12,17 @@ var Expense = mongoose.Schema({
 });
 
 var dailyExpense = mongoose.Schema({
+    _id:      { type: String},
     day:      { type: Number, default: 0.0 },
     month:    { type: Number               },
     year:     { type: Number               },
     expenses: { type: Number               },
     type:     { type: String               } 
+});
+
+var expenseType = mongoose.Schema({
+    type:      { type: String},
+    count:     { type: Number, default: 0.0 },
 });
 
 var UserSchema = mongoose.Schema({                                
@@ -25,7 +31,7 @@ var UserSchema = mongoose.Schema({
     totalexpenses:  { type: Number, default: 0.0                  },
     expenses:       [ Expense                                     ],
     timestatistics: [ dailyExpense                                ],   
-    types:          [ {type: String}                              ]
+    types:          [ type ]
 });
 
 var User = module.exports = mongoose.model('User', UserSchema);
@@ -40,6 +46,26 @@ module.exports = {
             { 
                 return callback("error hashing the password",null) 
             }  
+
+            if (username.length < 3)
+            {
+                return callback("username length is less than three characters",null); 
+            }
+
+            if (password.length <3)
+            {
+                return callback("password length is less than three characters",null); 
+            }
+
+            if (username.length > 16)
+            {
+                return callback("password length is more than sixteen characters",null); 
+            }
+
+            if (password.length > 16)
+            {
+                return callback("password length is more than sixteen characters",null); 
+            }
 
             var newUser = new User({                                     
                 username: username,                                         
@@ -66,7 +92,7 @@ module.exports = {
             .exec(function(err,user){
                 if(err)
                 { 
-                    return callback("error finding the user",null)
+                    return callback("error fetching use by username",null)
                 }
                 else   
                 { 
@@ -147,10 +173,12 @@ module.exports = {
     getExpenses:    
     function(userID,callback){                                   
         User.findById(userID,function(err,user){                 
-            if(err) { 
+            if(err) 
+            { 
                 return callback("error getting user", null);
             }                         
-            else    { 
+            else    
+            { 
                 callback(null,user.expenses.sort(function(a,b){
 
                     // Trim date to ~ the yyyymmdd                    
@@ -210,10 +238,41 @@ module.exports = {
                 return callback("error getting user", null) 
             }
 
+            // Removing the statistic data stored
             user.totalexpenses = 0;
 
+            for(var i = 0; i<user.timestatistics.length; i++)
+            {
+                user.timestatistics.id(user.timestatistics[i]._id)
+            }
+
+            // Creating new statistical data
             for(var i = 0; i<user.expenses.length; i++)
             {
+                var constructedID =  user.expenses[i].date.getFullYear()   + '-'
+                                  + (user.expenses[i].date.getMonth() + 1) + '-'
+                                  +  user.expenses[i].date.getDay();
+                
+
+                /*
+                if(user.timestatistics.id(constructedID))
+                {
+                    statistictofill = user.timestatistics.id(constructedID);
+                }
+                else
+                {
+                    var new statistic = {
+                        _id:      constructedID,
+                        day:      user.expenses[i].getDay(),
+                        month:    user.expenses[i].getMonth(),
+                        year:     user.expenses[i].getFullYear(),
+                        expenses: user.expenses[i].value(),
+                        type:     { type: String               }   
+                }*/
+
+
+
+
                 user.totalexpenses += user.expenses[i].value;
             } 
             

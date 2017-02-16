@@ -1,10 +1,10 @@
 body {
-	max-width:        900px;
-	width:            80%;
+	max-width:        1000px;
+	width:            95%;
 	margin:           auto;
 	padding-top:      10px;
   	font-family:      "Roboto", sans-serif;
-  	font-size:        13px;
+  	font-size:        1em;
   	font-weight:      400;
 }
 
@@ -21,7 +21,6 @@ button {
     padding:          .1rem 1rem;
     font-size:        13px;
     font-weight:      900;
-    width:            100%;
 }
 
 button.save {
@@ -32,16 +31,6 @@ button.save {
 button.edit {
     background-color: #f0ad4e;
     border-color:     #f0ad4e;
-}
-
-input {
-    font-family:      inherit;
-    font-size:        inherit;
-    font-weight:      inherit;
-}
-
-input.date{
-    width:            6em;
 }
 
 input[type=number]::-webkit-inner-spin-button, 
@@ -63,8 +52,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 #loginandregister div{
-    margin-top: 10px;
-
+    margin-top:       10px;
 }
 
 #loginandregister button {
@@ -77,89 +65,85 @@ input[type=number]::-webkit-outer-spin-button {
 #loginandregister input {
     max-width:        320px;
     width:            100%;
+    font-weight:      inherit;
+    font-size:        inherit;
 }
 
 /** EXPENSE TABLE **/
 
 #expensestable {
-	margin:           0 0 40px 0;
 	width:            100%;
-	box-shadow:       0 1px 3px rgba(0, 0, 0, 0.2);
-	border-collapse:  collapse;
-    display:          table;
+    margin-top:       2em;
+    box-shadow:       0 1px 3px rgba(0, 0, 0, 0.2);
+	border-collapse:  collapse;  
     background:       #f6f6f6;
-    table-layout:     fixed;
+    display:          flex;
+    flex-flow:        row wrap;
+    justify-content:  space-around;
 }
 
-#expensestable div {
-    display:          table-row;
-    padding-top:       3px;
-    padding-bottom:    3px;
-}
-
-#expensestable div.thead{
-    font-size:        1.3rem;
-    font-weight:      900;
-    color:            #ffffff;
-    background:       #2980b9;
+#expensestable .expense {
+    background-color: #0275d8;
+    color:            #fff;
+    margin:           auto;
+    border-radius:    5px;
+    width:            12em;
+    min-height:       12em;
+    margin-top:       10px;
     margin-bottom:    10px;
 }
 
-
-#expensestable div div {
-	padding-left:     15px;
-    padding-right:    15px;
-    display:          table-cell;
+#expensestable .expense>div{
+   width:             90%;
+   margin-left:       5%;
+   margin-right:      5%;
+   margin-top:        0.2em;
+   font-weight:       600;
+   font-size:         1.1em;
+   float:             left;
+   overflow:          auto;
 }
 
-#expensestable div div div{
-    padding-left:     0;
-    padding-right:    0;
+#expensestable .expense .value {
+    font-weight:      800;
+    font-size:        2.7em;
+    
 }
 
-#expensestable .date {
-    width:            10%;
-    min-width:        100px;
-}
-#expensestable .value {
-    width:            10%;
-    min-width:        90px;
-    text-align:       right;
+#expensestable .expense .value>div {
+    float:            left;
 }
 
-#expensestable .value div{
-    display: block;
+#expensestable .expense .description {
+    font-weight:      normal;
+    font-size:        1.0em;
+    min-height:       2.8em;
 }
 
-#expensestable .type {
-    width:            15%;
-    min-width:        120px;
-}
-#expensestable .description {
-
-}
-#expensestable .button {
-    width:            10%;
-    min-width:        120px
-}
-
-#expensestable .date input{
-    width:            5.8em;
-    text-align:       center;
-    margin-left:     -8px;
-}
-#expensestable .value input{
-    width:            4em;
-    text-align:       right; 
-}
-#expensestable .type input{
+#expensestable .expense .button button{
     width:            100%;
+    margin-bottom:    5px;
+
 }
-#expensestable .description input{
+
+#expensestable .expense input{
+    font-weight:      inherit;
+    font-size:        inherit; 
+    background-color: transparent; 
+    border-width:     0px;
+    border:           none;
+    float:            left;
     width:            100%;
+    background-color: rgba(0,0,0,0.1);
 }
 
+#expensestable .expense .value input{
+    width: 70%;
+}
 
+#expensestable .expense#expenseinput {
+    background-color: #ccc;
+}
 
 
 

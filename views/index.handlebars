@@ -25,31 +25,26 @@
         
         <div id="expensestable">
             
-            <div class ="thead">
-                <div class="date"        >Date</div>
-                <div class="value"       >Value</div>
-                <div class="type"        >Type</div>
-                <div class="description" >Description</div>
-                <div class="button"      ></div>
-            </div> 
 
-            <div id="expenseinput">
+            <div id="expenseinput" class="expense">
+                <div class="value">
+                    <input type="text"   maxlength="7"  id="expenseinputvalue" value="0.00" >
+                    <div style="color: #000;">&nbsp€</div>
+                </div>
                 <div class="date">
                     <input type="text"   maxlength="10" id="expenseinputdate" >
                 </div>
-                <div class="value">
-                    <input type="text"   maxlength="7"  id="expenseinputvalue" >
-                </div>
+
                 <div class="type">
-                    <input type="text"   class="type" id="expenseinputtype" >
+                    <input type="text"   class="type" id="expenseinputtype" value="Type" >
                 </div>
                 <div class="description">
-                    <input type="text"   class="descritption" id="expenseinputdesc" >
+                    <input type="text"   class="descritption" id="expenseinputdesc" value="Description"  >
                 </div>
                 <div class="button">
                     <button class="save" onclick="saveNewExpense()">Save</button>
                 </div>  
-            </div>
+            </div> 
 
         </div>
     </div>
