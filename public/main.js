@@ -1,16 +1,35 @@
 // On Document ready
 setdate(document.getElementById('expenseinputdate'));
-getExpenses(function(expenses){
-    console.log(expenses);
-    drawCanvas(null);
-    getStatistics();
+getExpenses(function(response){
+    var expenses   = response.expenses;
+    var statistics = response.statistics;
+
+    console.log(statistics)
+
+    var data = {
+        labels: [],
+        datasets: [{
+            label: "Type of expenses",
+            data:  []
+        }]
+    }
+
+    for (var i = 0; i < statistics.types.length, i < 8; i++)
+    {
+        if(i>5){break;}
+        data.labels.push(statistics.types[i].name);
+        data.datasets[0].data.push(statistics.types[i].count);
+    }
+
+    drawCanvas(data);
 });
 
 
 // DOM manipulation functions
 function templateExpense(expense){
 
-    var div = document.createElement('div');
+    var div  = document.createElement('div');
+
     div.setAttribute('class','expense');
     div.setAttribute('id',expense._id)
 
@@ -21,6 +40,7 @@ function templateExpense(expense){
     var y = date.getFullYear();     
 
     div.innerHTML = [
+        ' <div class="">',
         '   <div class="value">', 
         '       <div>'+ expense.value.toFixed(2) + '</div>',
         '       <input class="hide" type="number" min="0.01" step="0.01" max="2500" value="'+ expense.value.toFixed(2) + '" >',
@@ -42,10 +62,21 @@ function templateExpense(expense){
         '   <div class="button">',
         '       <button class="edit"      onclick="editExpense(this)">Edit</button>',
         '       <button class="save hide" onclick="saveEditExpense(this)">save</button>',
-        '   </div >'
+        '   </div >',
+        ' </div>'
     ].join("\n");
 
     return div; 
+}
+
+function replaceExpense(expense){
+
+    var expensediv   = document.getElementById(expense._id);
+    var parent       = document.getElementById('expensestable');
+    var index        = Array.prototype.indexOf.call(parent.children, expensediv);
+    parent.removeChild(parent.children[index]);
+
+    parent.insertBefore(templateExpense(expense), parent.children[index]);
 }
 
 function setdate(element){
@@ -74,45 +105,21 @@ function editExpense(element){
     }
 }
 
+function applyColourGrading(statistics){
+}
+
 // Canvas Functions
-function drawCanvas(expenses){
+function drawCanvas(data){
     var ctx = document.getElementById("myCanvas");
-    ctx.setAttribute("height",200)
+    ctx.setAttribute("height",ctx.clientHeight)
     ctx.setAttribute("width",ctx.clientWidth)
     var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
+        type:   'bar',
+        data:    data,
+        options: { 
+            scales: { 
+                yAxes: [{ ticks: { beginAtZero:true } }] 
+            } 
         }
     });
 }
@@ -140,8 +147,9 @@ function getExpenses(callback){
                     }
                 }
 
-                var expenses = JSON.parse(request.responseText);
-                var docfrag  = document.createDocumentFragment();
+                var expenses   = JSON.parse(request.responseText).expenses;
+                var statistics = JSON.parse(request.responseText).statistics;
+                var docfrag    = document.createDocumentFragment();
 
                 for (var i = 0; i < expenses.length; i++)
                 {
@@ -149,34 +157,11 @@ function getExpenses(callback){
                 }
                 body.appendChild(docfrag);
 
-                callback(expenses);
+                callback(JSON.parse(request.responseText));
             }
             else
             {
-                console.log("An error has occured getting the expenses!")
-            }
-        }
-    }
-
-    request.send();
-} 
-
-function getStatistics(callback){
-
-    var request = new XMLHttpRequest;
-
-    request.open("POST","/getstatistics",true);
-    request.setRequestHeader("Content-type", "application/json");
-    request.timeout = 200;
-
-    request.onreadystatechange = function(){
-        if(this.readyState == 4){
-            if(this.status == 200){
-                console.log(request.responseText)
-            }
-            else
-            {
-                console.log("An error has occured getting the statistics: " + request.responseText)
+                console.log("An error has occured getting the expenses: " + request.responseText + "!")
             }
         }
     }
@@ -232,7 +217,7 @@ function saveNewExpense(){
 
 function saveEditExpense(element){
     
-    var expense     = element.parentElement.parentElement;
+    var expense     = element.parentElement.parentElement.parentElement;
     var _id         = expense.id;
     var date        = expense.getElementsByClassName("date")[0].getElementsByTagName("input")[0].value;
     var d           = date.split('/')[0];
@@ -263,7 +248,7 @@ function saveEditExpense(element){
         request.onreadystatechange = function(){
             if(this.readyState == 4){
                 if(this.status == 200){
-                    getExpenses(null);  
+                    replaceExpense(JSON.parse(request.responseText));  
                 }
                 else
                 {

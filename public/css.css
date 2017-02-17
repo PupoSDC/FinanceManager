@@ -1,5 +1,5 @@
 body {
-	max-width:        1000px;
+	max-width:        1024px;
 	width:            95%;
 	margin:           auto;
 	padding-top:      10px;
@@ -23,26 +23,49 @@ button {
     font-weight:      900;
 }
 
-button.save {
-    background-color: #5cb85c;
-    border-color:     #5cb85c;
+/* Colours */
+
+.save {
+    background-color: #5cb85c !important;
+    border-color:     #5cb85c !important;
 }
 
-button.edit {
-    background-color: #f0ad4e;
-    border-color:     #f0ad4e;
+.edit {
+    background-color: #f0ad4e !important;
+    border-color:     #f0ad4e !important;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+.type6 {
+    background-color: #1769C3 !important;
+}
+.type5 {
+    background-color: #42529A !important;
+}
+.type4 {
+    background-color: #6D3B71 !important;
+}
+.type3 {
+    background-color: #972447 !important;
+
+}
+.type1 {
+    background-color: #C20D1E !important;
+}
+.type0 {
+    background-color: #D80109 !important;
 }
 
 .hide {
     display:          none !important;
 }
 
+.neutral {
+    background-color: #ccc !important;
+}
+
+
+
+/* Login and register */
 #loginandregister {
     max-width:        340px;
     padding-top:      20px;
@@ -57,8 +80,9 @@ input[type=number]::-webkit-outer-spin-button {
 
 #loginandregister button {
     padding:          1rem 1rem;
+    width:            50%;
     max-width:        160px;
-    font-size:        1.3em;
+    font-size:        1.1em;
     font-weight:      800px;
 }
 
@@ -70,30 +94,60 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 /** EXPENSE TABLE **/
-
 #expensestable {
-	width:            100%;
+    width:            100%;
     margin-top:       2em;
     box-shadow:       0 1px 3px rgba(0, 0, 0, 0.2);
 	border-collapse:  collapse;  
     background:       #f6f6f6;
-    display:          flex;
-    flex-flow:        row wrap;
-    justify-content:  space-around;
+    overflow:         hidden;
+    margin:           auto;
 }
 
 #expensestable .expense {
-    background-color: #0275d8;
-    color:            #fff;
-    margin:           auto;
-    border-radius:    5px;
-    width:            12em;
-    min-height:       12em;
-    margin-top:       10px;
-    margin-bottom:    10px;
+    width:            20%;
+    float:            left;
+    margin-top:       5px;
+    margin-bottom:    5px;
 }
 
-#expensestable .expense>div{
+@media (max-width: 1080px) {
+    #expensestable .expense {
+        width:        25%;
+    }
+}
+
+@media (max-width: 870px) {
+    #expensestable .expense {
+        width:        33%;
+    }
+}
+
+@media (max-width: 667px) {
+    #expensestable .expense {
+        width:        50%;
+    }
+}
+
+@media (max-width: 446px) {
+    #expensestable .expense {
+        width:        100%;
+    }
+}
+
+#expensestable .expense>div {
+    background-color: #0275d8;
+    color:            #fff;
+    border-radius:    5px;
+    min-width:        200px;
+    min-height:       200px;
+    width:            90%;
+    margin:           auto;
+    overflow:         hidden;
+    position:         relative;
+}
+
+#expensestable .expense>div>div{
    width:             90%;
    margin-left:       5%;
    margin-right:      5%;
@@ -106,8 +160,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #expensestable .expense .value {
     font-weight:      800;
-    font-size:        2.7em;
-    
+    font-size:        34px;   
 }
 
 #expensestable .expense .value>div {
@@ -117,13 +170,16 @@ input[type=number]::-webkit-outer-spin-button {
 #expensestable .expense .description {
     font-weight:      normal;
     font-size:        1.0em;
-    min-height:       2.8em;
+}
+
+#expensestable .expense .button {
+    position:         absolute;
+    bottom:           5px;
+    left:             0;
 }
 
 #expensestable .expense .button button{
     width:            100%;
-    margin-bottom:    5px;
-
 }
 
 #expensestable .expense input{
@@ -133,17 +189,14 @@ input[type=number]::-webkit-outer-spin-button {
     border-width:     0px;
     border:           none;
     float:            left;
-    width:            100%;
+    width:            90%;
     background-color: rgba(0,0,0,0.1);
 }
 
 #expensestable .expense .value input{
-    width: 70%;
+    width:            70%;
 }
 
-#expensestable .expense#expenseinput {
-    background-color: #ccc;
-}
 
 
 

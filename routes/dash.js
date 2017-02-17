@@ -99,11 +99,13 @@ router.post('/createexpense', function(req,res){
 });
 
 router.post('/savebackup', function(req,res){
-    if(!req.user){ return res.status(500).status("No user!")}
+    if(!req.user){ 
+        return res.status(500).status("Error saving backup: No user logged in!")
+    }
     var savedocuments = 0;
 
-    for (var i=0; i<req.body.length; i++)
-    {
+    for (var i=0; i<req.body.length; i++){
+        
         var expense = {
             value        : req.body[i].value,
             date         : req.body[i].date,           
@@ -124,42 +126,44 @@ router.post('/savebackup', function(req,res){
 
 router.post('/getexpenses', function(req,res){ 
     
-    if(!req.user)
-    { 
+    if(!req.user){ 
         return res.status(500).status("Error getting expenses: No user logged in!")
     }
 
-    User.getExpenses(req.user._id,function(err, expenses) {
-            if(err)
-            { 
-                return res.status(500).send("Error getting expenses: " + err + "!"); 
-            }
-            else   
-            { 
-                return res.send(expenses);        
-            }
-        }
-    );
-});
-
-router.post('/getstatistics', function(req,res){ 
-    
-    if(!req.user)
-    { 
-        return res.status(500).status("Error getting statistics: No user logged in!")
+    var numberofAssyncCalls = 2;
+    var responseObject = {
+        expenses:   null,
+        statistics: null,
+        types:      null,
     }
 
-    User.resetStatistics(req.user._id,function(err,statistics) {
-            if(err)
-            { 
-                return res.status(500).send("Error getting statistics: " + err + "!"); 
-            }
-            else   
-            { 
-                return res.send(statistics);        
+    User.getExpenses(req.user._id,function(err, expenses) {
+        if(err){ 
+            return res.status(500).send("Error getting expenses: " + err + "!"); 
+        }
+        else   
+        { 
+            numberofAssyncCalls--;
+            responseObject.expenses = expenses;
+            if(numberofAssyncCalls == 0){ 
+                res.send(responseObject); 
+            }                        
+        }
+    });
+
+    User.getStatistics(req.user._id,function(err, statistics) {
+        if(err){ 
+            return res.status(500).send("Error getting expenses: " + err + "!"); 
+        }
+        else   
+        { 
+            numberofAssyncCalls--;
+            responseObject.statistics = statistics;
+            if(numberofAssyncCalls == 0){ 
+                res.send(responseObject); 
             }
         }
-    );
+    });
 });
 
 router.post('/updateexpense', function(req,res){ 
