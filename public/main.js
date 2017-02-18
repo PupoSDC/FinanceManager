@@ -1,10 +1,8 @@
 // On Document ready
 setdate(document.getElementById('expenseinputdate'));
 getExpenses(function(response){
-    var expenses   = response.expenses;
-    var statistics = response.statistics;
-
-    console.log(statistics)
+    var expenses     = response.expenses;
+    var expenseTypes = response.types;
 
     var data = {
         labels: [],
@@ -13,12 +11,15 @@ getExpenses(function(response){
             data:  []
         }]
     }
+    expenseTypes.sort(function(a,b){
+        return b.value - a.value;
+    })
 
-    for (var i = 0; i < statistics.types.length, i < 8; i++)
+    for (var i = 0; i < expenseTypes.length; i++)
     {
-        if(i>5){break;}
-        data.labels.push(statistics.types[i].name);
-        data.datasets[0].data.push(statistics.types[i].count);
+        if(i>8){break;}
+        data.labels.push(expenseTypes[i].name);
+        data.datasets[0].data.push(expenseTypes[i].value.toFixed(2));
     }
 
     drawCanvas(data);
@@ -131,7 +132,7 @@ function getExpenses(callback){
 
     request.open("POST","/getexpenses",true);
     request.setRequestHeader("Content-type", "application/json");
-    request.timeout = 200;
+    //request.timeout = 200;
 
     request.onreadystatechange = function(){
         if(this.readyState == 4){
@@ -271,6 +272,8 @@ function saveBackup(jsoninput){
     request.setRequestHeader('Content-type', 'application/json');
 
     request.send(jsoninput);
+
+    console.log("sending " + JSON.parse(jsoninput).length + " expenses!" )
 
     request.onreadystatechange = function(){
         if(this.readyState == 4){

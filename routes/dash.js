@@ -4,7 +4,10 @@ var User          = require('../models/User');
 var passport      = require('passport');                 
 var LocalStrategy = require('passport-local').Strategy;  
 
-// Serialization/deserialization of user
+/////////////////////////////////////////////////////////////
+// Serialization/deserialization of user ////////////////////
+/////////////////////////////////////////////////////////////
+
 passport.serializeUser(function(user, done) { done(null, user.id); });                                             
 passport.deserializeUser(function(id, done) { User.getUserById(id, function(err, user) { done(err, user); }); });  
 
@@ -22,7 +25,7 @@ passport.use(new LocalStrategy(
 ///// USER Manaement (POSTS) ////////////////////////////////
 /////////////////////////////////////////////////////////////
 
-router.post('/login', function(req, res, next) {
+router.post('/login',    function(req, res, next){
     
     var username  = req.body.username;  
     var password  = req.body.password;
@@ -98,14 +101,16 @@ router.post('/createexpense', function(req,res){
     );
 });
 
-router.post('/savebackup', function(req,res){
+router.post('/savebackup',    function(req,res){
     if(!req.user){ 
         return res.status(500).status("Error saving backup: No user logged in!")
     }
-    var savedocuments = 0;
+    
+    var recursiveCallback = function(i,nDocuments,err){
 
-    for (var i=0; i<req.body.length; i++){
-        
+        if( i >= nDocuments){ return res.send("" + i + " documents saved"); }
+        if( err )           { return res.status(500).send(err);             }
+
         var expense = {
             value        : req.body[i].value,
             date         : req.body[i].date,           
@@ -113,18 +118,19 @@ router.post('/savebackup', function(req,res){
             description  : req.body[i].description
         }
 
-        User.createExpense(req.user._id,expense,function(err, id) {
-            if(!err){ savedocuments++; }
-            
-            if( savedocuments == req.body.length )
-            {
-                res.send("saved: " + savedocuments);
-            }
+        i++;
+
+        User.createExpense(req.user._id,expense, function(err,id){
+            if(err){ return res.status(500).send(err); }
+            return recursiveCallback(i,nDocuments,null);
         });
-    }    
+    }
+
+    recursiveCallback(0,req.body.length,null); 
+
 });
 
-router.post('/getexpenses', function(req,res){ 
+router.post('/getexpenses',   function(req,res){
     
     if(!req.user){ 
         return res.status(500).status("Error getting expenses: No user logged in!")
@@ -132,9 +138,10 @@ router.post('/getexpenses', function(req,res){
 
     var numberofAssyncCalls = 2;
     var responseObject = {
-        expenses:   null,
-        statistics: null,
-        types:      null,
+        expenses:       null,
+        timeStatistics: null,
+        types:          null,
+        totalExpenses:  null
     }
 
     User.getExpenses(req.user._id,function(err, expenses) {
@@ -153,12 +160,15 @@ router.post('/getexpenses', function(req,res){
 
     User.getStatistics(req.user._id,function(err, statistics) {
         if(err){ 
-            return res.status(500).send("Error getting expenses: " + err + "!"); 
+            return res.status(500).send("Error getting statistics: " + err + "!"); 
         }
         else   
         { 
             numberofAssyncCalls--;
-            responseObject.statistics = statistics;
+            responseObject.totalExpenses  = statistics.totalExpenses;
+            responseObject.timeStatistics = statistics.timeStatistics
+            responseObject.types          = statistics.types            
+
             if(numberofAssyncCalls == 0){ 
                 res.send(responseObject); 
             }
@@ -166,7 +176,7 @@ router.post('/getexpenses', function(req,res){
     });
 });
 
-router.post('/updateexpense', function(req,res){ 
+router.post('/updateexpense', function(req,res){
     
     if(!req.user)
     { 

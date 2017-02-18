@@ -5,34 +5,34 @@ var bcrypt    = require('bcryptjs'); // Used to hash passwords
 // methods' callback functions return an error message on first parameter. 
 
 var Expense = mongoose.Schema({                                 
-    date:        { type: Date,   required: true, default: Date.now() },  
-    value:       { type: Number, required: true                      },                        
-    type:        { type: String, required: true                      },                        
-    description: { type: String                                      }                         
-});
-
-var dailyExpense = mongoose.Schema({
-    _id:      { type: String},
-    day:      { type: Number, default: 0.0 },
-    month:    { type: Number               },
-    year:     { type: Number               },
-    expenses: { type: Number               },
-    type:     { type: String               } 
+    date:           { type: Date,   required: true, default: Date.now() },  
+    value:          { type: Number, required: true                      },                        
+    type:           { type: String, required: true                      },                        
+    description:    { type: String                                      }                         
 });
 
 var expenseType = mongoose.Schema({
-    name:      { type: String},
-    count:     { type: Number, default: 0.0 },
-    value:     { type: Number, default: 0.0 }
+    name:           { type: String               },
+    count:          { type: Number, default: 0.0 },
+    value:          { type: Number, default: 0.0 }
+});
+
+var dailyExpense = mongoose.Schema({
+    day:            { type: Number               },
+    month:          { type: Number               },
+    year:           { type: Number               },
+    count:          { type: Number               },
+    value:          { type: Number               },
+    expenseTypes:   [ expenseType ]
 });
 
 var UserSchema = mongoose.Schema({                                
     username:       { type: String,  required: true, unique: true },
     password:       { type: String,  required: true               },
-    totalexpenses:  { type: Number, default: 0.0                  },
+    totalExpenses:  { type: Number, default: 0.0                  },
     expenses:       [ Expense                                     ],
-    timestatistics: [ dailyExpense                                ],   
-    expensetypes:   [ expenseType ]
+    timeStatistics: [ dailyExpense                                ],   
+    expenseTypes:   [ expenseType ]
 });
 
 var User = module.exports = mongoose.model('User', UserSchema);
@@ -150,12 +150,104 @@ module.exports = {
                 value       : expense.value,
                 type        : expense.type,
                 description : expense.description
-            }                                                       
+            }  
+
             user.expenses.push(newExpense);
-            user.save(callback(null,user.expenses[user.expenses.length -1]));
-        });                
+
+            // Update to the user statistics
+            var expenseDateObj = new Date(expense.date);
+
+            for (var i = 0; i<= user.expenseTypes.length;   i++){
+                
+                // If this expense type does not exist
+                if( i == user.expenseTypes.length ){
+                    var newExpenseType = {
+                        name:  expense.type,
+                        count: 1.0,
+                        value: expense.value
+                    }
+                   
+                    user.expenseTypes.push(newExpenseType);
+                    break;
+                }
+
+                // If this expense type matches an existing expense type
+                if( user.expenseTypes[i].name.replace(/\s+/g, '').toLowerCase() ==
+                    expense.type.replace(/\s+/g, '').toLowerCase() ){
+
+                    user.expenseTypes[i].count++;
+                    user.expenseTypes[i].value += expense.value;
+                    break;
+                }
+            }
+
+            for (var i = 0; i<=user.timeStatistics.length; i++){
+                
+                // If this expense day is not counted yet
+                if( i == user.timeStatistics.length ){    
+
+                    var newDailyExpense = {
+                        day:            expenseDateObj.getDay(),
+                        month:          expenseDateObj.getMonth(),
+                        year:           expenseDateObj.getFullYear(),
+                        count:          1,
+                        value:          expense.value,
+                        expenseTypes:   [{ 
+                                            name:  expense.type,
+                                            count: 1.0,
+                                            value: 0.0
+                                        }]
+                    }
+                   
+                    user.timeStatistics.push(newDailyExpense);
+                    break;
+                }
+
+                if( user.timeStatistics[i].day   == expenseDateObj.getDay()      &&
+                    user.timeStatistics[i].month == expenseDateObj.getMonth()    &&
+                    user.timeStatistics[i].year  == expenseDateObj.getFullYear()    ){
+
+                    user.timeStatistics[i].count++;
+                    user.timeStatistics[i].value += expense.value;
+
+                    for (var j = 0; j<=user.timeStatistics[i].expenseTypes.length; j++){
+
+                        // If this expense type does not exist
+                        if( j == user.timeStatistics[i].expenseTypes.length ){
+                            var newExpenseType = {
+                                name:  expense.type,
+                                count: 1.0,
+                                value: expense.value
+                            }
+                           
+                            user.timeStatistics[i].expenseTypes.push(newExpenseType);
+                            break;
+                        }
+
+                        // If this expense type matches an existing expense type
+                        if( user.timeStatistics[i].expenseTypes[j].name.replace(/\s+/g, '').toLowerCase() ==
+                            expense.type.replace(/\s+/g, '').toLowerCase() ){
+
+                            user.timeStatistics[i].expenseTypes[j].count++;
+                            user.timeStatistics[i].expenseTypes[j].value += expense.value;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            user.save(function(err,updateduser){
+                if(err){
+                    callback("error saving an expense",null);
+                }
+                else{
+                    callback(null, updateduser.expenses[updateduser.expenses.length -1]);
+                }    
+            });
+        });              
     },
-     
+
     getExpenses:    
     function(userID,callback){                                   
         User.findById(userID,function(err,user){                 
@@ -189,9 +281,9 @@ module.exports = {
             }                         
             else { 
                 callback(null,{
-                    totalexpenses:  user.totalexpenses,
-                    timestatistics: user.dailyExpenses,
-                    types:          user.expensetypes.sort(function(a,b){
+                    totalExpenses:  user.totalExpenses,
+                    timeStatistics: user.dailyExpenses,
+                    types:          user.expenseTypes.sort(function(a,b){
                                         return b.count - a.count;
                                     })  
                 }); 
@@ -230,71 +322,6 @@ module.exports = {
         });
     }, 
 
-    resetStatistics:
-    function(userID,callback){                                   
-        User.findById(userID,function(err,user){                 
-            if(err){ 
-                return callback("error getting user", null) 
-            }
 
-            // Removing the statistic data stored
-            user.totalexpenses = 0;
-
-            if(!user.timestatistics){ user.timestatistics = []; }
-            if(!user.expensetypes){   user.expensetypes   = []; }
-                
-            for(var i = 0; i<user.timestatistics.length; i++){
-                user.timestatistics.id(user.timestatistics[i]._id)
-            }
-
-            for(var i = 0; i<user.expensetypes.length; i++){
-                user.expensetypes[i].count = 0;
-            }
-
-            // Creating new statistical data
-            for(var i = 0; i<user.expenses.length; i++){
-                
-                var constructedID =  user.expenses[i].date.getFullYear()   + '-'
-                                  + (user.expenses[i].date.getMonth() + 1) + '-'
-                                  +  user.expenses[i].date.getDay();
-                
-                for (var j = 0; j<=user.expensetypes.length; j++){
-
-                    if( j == user.expensetypes.length ){
-                        var newExpenseType = {
-                            name: user.expenses[i].type,
-                            count: 1.0,
-                            value: 0.0
-                        }
-                       
-                        user.expensetypes.push(newExpenseType);
-                        break;
-                    }
-
-                    if( user.expensetypes[j].name.replace(/\s+/g, '').toLowerCase() ==
-                        user.expenses[i].type.replace(/\s+/g, '').toLowerCase() ){
-
-                        user.expensetypes[j].count++;
-                        user.expensetypes[j].value += expenses[i].value;
-                        break;
-                    }
-
-                }
-
-                user.totalexpenses += user.expenses[i].value;
-            } 
-            
-            user.save(function(err,updateduser){
-                if(err) 
-                { 
-                    return callback("error saving statistics",null); 
-                }
-                else    
-                { 
-                    return callback(null,updateduser.expensetypes); 
-                }
-            });
-        })
-    }
     
 }
